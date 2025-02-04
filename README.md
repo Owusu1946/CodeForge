@@ -1,134 +1,142 @@
- You are an expert full-stack developer with 20+ years of experience building SaaS platforms. Your task is to generate a **flawless, production-ready codebase** for a React-based realtime code editor with AI website building and Paystack integration. Use zero-error tactical patterns.  
+# CodeForge 🛠️
 
----
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Next.js](https://img.shields.io/badge/Next.js-15.1.6-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.0.0-blue)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0.0-blue)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-2.39.7-green)](https://supabase.io/)
 
-### **Core Requirements**  
-1. **Stack**  
-   - Frontend: React + TypeScript + Vite + Shadcn UI  
-   - Realtime: Y.js + WebSocket (self-hosted) + Monaco Editor  
-   - AI: Gemini Pro via `@google/generative-ai` (code generation only)  
-   - Backend: Next.js API routes + Supabase (PostgreSQL + Auth)  
-   - Payments: Paystack API (subscriptions + one-time purchases)  
-   - Infrastructure: Docker + GitHub Actions CI/CD  
+A real-time collaborative code editor with integrated AI assistance, terminal support, and seamless team collaboration features.
 
-2. **Critical Paths**  
-   - **A.** Realtime Editor:  
-     - Collaborative cursors/undo-redo via Y.js  
-     - ESLint/Prettier integration with 0-config support for React/Vue/Svelte  
-     - File tree management with atomic commits (like Git)  
+## 🚀 Features
 
-   - **B. AI Website Builder**:  
-     - Context-aware Gemini prompts:  
-       ```ts  
-       const SYSTEM_PROMPT = `You are CodeForge AI. Strictly respond with:  
-       1. Clean React+Tailwind code  
-       2. Zod validation schema  
-       3. Unit test in Vitest  
-       Never explain.`  
-       ```  
-     - Auto-deploy to Vercel on AI-generated code approval  
+- **Real-time Collaboration**
+  - Multi-user editing with cursor presence
+  - Live collaboration status
+  - Invite system with email and link sharing
+  
+- **Advanced Editor**
+  - Monaco Editor integration
+  - Multi-language support with syntax highlighting
+  - Custom language icons for file types
+  - File tree navigation
 
-   - **C. Paystack Integration**:  
-     - Tiered subscriptions (`basic|pro|enterprise`)  
-     - AI credit purchases (1 credit = 1 AI generation)  
-     - Webhook fraud checks with Supabase edge functions  
+- **Development Tools**
+  - Integrated terminal
+  - Command history
+  - File upload/download
+  - Project templates
 
----
+- **AI Assistant**
+  - Context-aware code suggestions
+  - Real-time code analysis
+  - Natural language interactions
 
-### **Error Mitigation Protocol**  
-1. **Code Generation**  
-   - All AI outputs pass through:  
-     ```ts  
-     const sanitizeCode = (code: string) => {  
-       if (/eval\(|XMLHttpRequest/.test(code)) throw new SecurityError();  
-       return DenoDOM.parse(code); // SSR sanitization  
-     }  
-     ```  
+## 🛠️ Tech Stack
 
-2. **Payment Security**  
-   - Implement Paystack's **PCI-DSS Level 1** flow:  
-     ```ts  
-     initializePayment({  
-       reference: crypto.randomUUID(),  
-       amount: 500000, // NGN  
-       email: "user@domain.com",  
-       currency: "NGN",  
-       channels: ["card", "bank"],  
-       metadata: {  
-         session_id: req.ip + req.headers["User-Agent"]  
-       }  
-     });  
-     ```  
+| Category | Technologies |
+|----------|-------------|
+| Frontend | Next.js 15.1.6, React 19.0.0, TypeScript 5 |
+| Editor | Monaco Editor, Y.js |
+| Real-time | Y-WebSocket, Y-Monaco |
+| Terminal | XTerm.js |
+| Authentication | Supabase Auth |
+| Database | Supabase |
+| Styling | Tailwind CSS 3.4.1 |
+| Icons | Lucide React |
 
-3. **Realtime Sync**  
-   - Conflict resolution via **automerge-rs** WASM:  
-     ```rust  
-     #[wasm_bindgen]  
-     pub fn merge_docs(a: &str, b: &str) -> String {  
-       let mut doc_a = Automerge::load(a.as_bytes());  
-       let doc_b = Automerge::load(b.as_bytes());  
-       doc_a.merge(&doc_b).save();  
-       base64::encode(doc_a.save())  
-     }  
-     ```  
+## 🚀 Getting Started
 
----
+### Prerequisites
 
-### **Deployment Blueprint**  
-1. **Infrastructure-as-Code**  
-   ```docker  
-   # Dockerfile.prod  
-   FROM node:20-slim as builder  
-   RUN corepack enable && corepack prepare pnpm@latest --activate  
-   COPY . /app  
-   RUN pnpm install --frozen-lockfile && pnpm build  
+- Node.js (v18 or higher)
+- npm or yarn
+- Supabase account
 
-   FROM nginx:alpine  
-   COPY --from=builder /app/dist /usr/share/nginx/html  
-   COPY ./nginx.conf /etc/nginx/conf.d/default.conf  
-   EXPOSE 80  
-   ```  
+### Installation
 
-2. **Paystack Webhook Security**  
-   ```ts  
-   // Verify Paystack signatures  
-   const isValidPaystackRequest = (req: NextRequest) => {  
-     const hash = crypto  
-       .createHmac('sha512', process.env.PAYSTACK_SECRET!)  
-       .update(JSON.stringify(req.body))  
-       .digest('hex');  
-     return hash === req.headers.get('x-paystack-signature');  
-   };  
-   ```  
+1. Clone the repository
+```bash
+git clone https://github.com/Owusu1946/CodeForge
+cd codeforge
+```
 
----
+2. Install dependencies
+```bash
+npm install --legacy-peer-deps
+```
 
-### **Execution Command**  
-```bash  
-# Generate full codebase  
-CODEFORGE_PROMPT="BEGIN {  
-  MODE: production  
-  STACK: react,nextjs,supabase,paystack  
-  AI_PROVIDER: google-gemini  
-  PAYMENT: paystack-ngn  
-  LICENSE: AGPL-3.0  
-}"  
+3. Setup environment variables
+```bash
+cp .env.example .env.local
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SUPABASE_URL=https://your_superbase_url.supabase.co
+NEXT_PUBLIC_BASE_URL=http://localhost:3000 
+```
 
-gemini-ai --prompt "$CODEFORGE_PROMPT" \  
-  --output-dir ./codeforge \  
-  --strict-types \  
-  --security-level paranoid \  
-  --include-tests vitest,playwright \  
-  --payment-gateway paystack:latest  
-```  
+4. Start the development server
+```bash
+npm run dev
+```
+## 🏗️ Project Structure
+```plaintext
+codeforge/
+├── src/
+│ ├── app/ # Next.js app router
+│ ├── components/ # React components
+│ ├── contexts/ # React contexts
+│ ├── lib/ # Utilities and services
+│ └── types/ # TypeScript types
+├── public/ # Static assets
+└── tailwind.config.js # Tailwind configuration
+```
 
----
 
-**Final Output**:  
-- Full TypeScript codebase with 100% test coverage  
-- Terraform files for AWS/GCP deployment  
-- Postman collection for Paystack webhooks  
-- Load-balanced WebSocket server setup  
-- GDPR/CCPA compliance docs  
+## 🤝 Contributing
 
-**No errors allowed. You have root access.**  
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to your fork
+5. Submit a pull request
+
+## 📝 Code of Conduct
+
+Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
+
+## 🔒 Security
+
+For security issues, please email security@codeforge.dev instead of using the issue tracker.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+- [Supabase](https://supabase.io/)
+- [Y.js](https://yjs.dev/)
+- [XTerm.js](https://xtermjs.org/)
+
+## 📊 Version History
+
+| Version | Date | Description |
+|---------|------|-------------|
+| 0.1.0 | Current | Initial release with core features |
+
+## 🔗 Links
+
+- [Documentation](https://docs.codeforge.dev)
+- [Demo](https://demo.codeforge.dev)
+- [Issue Tracker](https://github.com/yourusername/codeforge/issues)
+
+## 💻 Development Status
+
+Current version: 0.1.0 (Beta)
+
+For the latest updates and roadmap, please visit our [project board](https://github.com/Owusu1946/codeforge).
