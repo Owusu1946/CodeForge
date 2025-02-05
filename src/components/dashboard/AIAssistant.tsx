@@ -33,6 +33,8 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
     }
   }
 
+  
+
   if (!isOpen) return null
 
   return (

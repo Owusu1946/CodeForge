@@ -13,7 +13,8 @@ export function CollaboratorMenu() {
   const [isInviting, setIsInviting] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
 
-  const handleInvite = async () => {
+  const handleInvite = async (e?: React.FormEvent) => {
+    e?.preventDefault()
     if (!inviteEmail) return
     setIsInviting(true)
     try {
@@ -28,8 +29,8 @@ export function CollaboratorMenu() {
   }
 
   const handleCopyLink = async () => {
-    const inviteLink = `${window.location.origin}/invite/${btoa(window.location.pathname)}`
     try {
+      const inviteLink = `${window.location.origin}/invite/${btoa(window.location.pathname)}`
       await navigator.clipboard.writeText(inviteLink)
       setIsCopied(true)
       toast.success('Link copied to clipboard')
@@ -40,7 +41,7 @@ export function CollaboratorMenu() {
   }
 
   return (
-    <div className="absolute top-full right-0 mt-1 w-64 bg-[#252526] rounded-sm shadow-lg border border-[#2d2d2d] py-2">
+    <div className="collab-menu w-64 bg-[#252526] rounded-sm shadow-lg border border-[#2d2d2d] py-2">
       <div className="px-3 py-2 border-b border-[#2d2d2d]">
         <h3 className="font-semibold mb-2">Collaborators</h3>
         {collaborators.map(collaborator => (
@@ -59,22 +60,21 @@ export function CollaboratorMenu() {
       </div>
       
       <div className="px-3 py-2">
-        <div className="flex gap-2 mb-2">
+        <form onSubmit={handleInvite} className="flex gap-2 mb-2">
           <Input
             value={inviteEmail}
             onChange={(e) => setInviteEmail(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleInvite()}
             placeholder="Email address"
             className="h-8 bg-[#3c3c3c] border-none text-sm"
           />
           <Button 
-            onClick={handleInvite} 
+            type="submit"
             disabled={isInviting || !inviteEmail}
             className="h-8 px-2 min-w-[32px]"
           >
             <UserPlus className="w-4 h-4" />
           </Button>
-        </div>
+        </form>
         <button 
           onClick={handleCopyLink}
           className="w-full text-left px-2 py-1.5 hover:bg-[#2d2d2d] rounded-sm flex items-center gap-2"

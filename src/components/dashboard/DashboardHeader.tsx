@@ -34,11 +34,17 @@ export function DashboardHeader({ onToggleTerminal }: DashboardHeaderProps) {
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (!(event.target as HTMLElement).closest('.menu-container')) {
-        setShowFileMenu(false)
+      const target = event.target as HTMLElement
+      // Don't close if clicking inside the collaborator menu
+      if (!target.closest('.collab-menu') && !target.closest('.collab-trigger')) {
         setShowCollabMenu(false)
       }
+      // Keep file menu handling
+      if (!target.closest('.menu-container')) {
+        setShowFileMenu(false)
+      }
     }
+
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
@@ -291,7 +297,7 @@ export function DashboardHeader({ onToggleTerminal }: DashboardHeaderProps) {
       <div className="flex items-center">
         <div className="relative">
           <button 
-            className="p-1.5 hover:bg-[#505050] rounded-sm flex items-center gap-2"
+            className="p-1.5 hover:bg-[#505050] rounded-sm flex items-center gap-2 collab-trigger"
             onClick={() => setShowCollabMenu(!showCollabMenu)}
           >
             <Users className="w-4 h-4" />
@@ -299,7 +305,9 @@ export function DashboardHeader({ onToggleTerminal }: DashboardHeaderProps) {
           </button>
 
           {showCollabMenu && (
-            <CollaboratorMenu />
+            <div className="absolute top-full right-0 mt-1">
+              <CollaboratorMenu />
+            </div>
           )}
         </div>
 
